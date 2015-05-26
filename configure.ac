@@ -28,15 +28,20 @@ AC_CHECK_HEADER([boost/logic/tribool.hpp],
 AC_CHECK_HEADER([boost/logic/tribool_io.hpp],
                 [],
                 [AC_MSG_ERROR([Could not find tribool_io.hpp.])])
+AC_CHECK_HEADER([boost/test/unit_test.hpp],
+                [],
+                [AC_MSG_WARN([Could not find boost/test/unit_test.hpp. You will not be able to run unit tests.])])
 
 # Check for libwarped
 m4_include([m4/check_lib_warped.m4])
 CHECK_LIB_WARPED
 
-CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wpedantic -Werror"
+CPPFLAGS="$CPPFLAGS -Wall -Wextra -Wpedantic -Werror"
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([examples/Makefile])
 AC_CONFIG_FILES([examples/circuit/Makefile])
+AC_CONFIG_FILES([tests/Makefile])
+AC_CONFIG_FILES([tests/examples/Makefile])
 
 AC_OUTPUT

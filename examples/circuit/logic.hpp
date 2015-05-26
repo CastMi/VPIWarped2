@@ -41,6 +41,8 @@ class Port : public warped::SimulationObject {
       void addUpstream( std::string name ) { upstreams.emplace(name, boost::indeterminate); }
       void addDownStream( std::string name ) { downstreams.emplace(name); }
       boost::tribool getPortOutput() { return output; }
+      unsigned int getInputSize() { return upstreams.size(); }
+      unsigned int getOutputSize() { return downstreams.size(); }
 
       PortState state_;
 
