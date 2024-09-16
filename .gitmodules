@@ -1,0 +1,3 @@
+[submodule "ext/warped2"]
+	path = ext/warped2
+	url = git@github.com:CastMi/warped2.git

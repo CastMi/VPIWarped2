@@ -33,7 +33,6 @@ int main(int argc, const char** argv) {
       fakeportstuff.emplace_back(FakePort::object_name(i));
    }
 
-
    // create the netlist
    // Start first layer
    // first or

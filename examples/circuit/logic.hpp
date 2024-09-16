@@ -16,6 +16,35 @@ WARPED_DEFINE_OBJECT_STATE_STRUCT(PortState) {
    boost::tribool exit;
 };
 
+class Component : public warped::SimulationObject {
+   public:
+      Component (const std::string& name)
+         : SimulationObject(name), 
+         state_(),
+         inputs(),
+         outputs()
+   {}
+
+      virtual std::vector<std::shared_ptr<warped::Event> > createInitialEvents() = 0;
+      virtual std::vector<std::shared_ptr<warped::Event> > receiveEvent(const warped::Event&) = 0;
+      warped::ObjectState& getState() override { return this->state_; }
+      void addInput( std::pair<std::string, std::string> value ) { inputs.push_back(value); }
+      void addOutput( std::pair<std::string, boost::tribool> value ) { outputs.insert(value); }
+      void addOutput( std::string name, boost::tribool value ) { outputs.emplace(name, value); }
+      void addOutput( std::string name ) { outputs.emplace(name, boost::indeterminate); }
+      unsigned int getInputSize() const { return inputs.size(); }
+      unsigned int getOutputSize() const { return outputs.size(); }
+
+      PortState state_;
+
+   protected:
+      // First string is the component, second is the signal name
+      std::vector< std::pair< std::string, std::string > > inputs;
+      // First string is the output name signal
+      std::map< std::string, boost::tribool > outputs;
+
+};
+
 class Port : public warped::SimulationObject {
    public:
       Port (const std::string& name)
@@ -35,14 +64,14 @@ class Port : public warped::SimulationObject {
 
       virtual std::vector<std::shared_ptr<warped::Event> > createInitialEvents() = 0;
       virtual std::vector<std::shared_ptr<warped::Event> > receiveEvent(const warped::Event&) = 0;
-      warped::ObjectState& getState() { return this->state_; }
+      warped::ObjectState& getState() override { return this->state_; } 
       void addUpstream( std::pair<std::string, boost::tribool> value ) { upstreams.insert(value); }
       void addUpstream( std::string name, boost::tribool value ) { upstreams.emplace(name, value); }
       void addUpstream( std::string name ) { upstreams.emplace(name, boost::indeterminate); }
       void addDownStream( std::string name ) { downstreams.emplace(name); }
-      boost::tribool getPortOutput() { return output; }
-      unsigned int getInputSize() { return upstreams.size(); }
-      unsigned int getOutputSize() { return downstreams.size(); }
+      boost::tribool getPortOutput() const { return output; }
+      unsigned int getInputSize() const { return upstreams.size(); }
+      unsigned int getOutputSize() const { return downstreams.size(); }
 
       PortState state_;
 
@@ -65,8 +94,8 @@ class PortEvent : public warped::Event {
          ts_(timestamp)
    {}
 
-      const std::string& receiverName() const { return receiver_name_; }
-      unsigned int timestamp() const { return ts_; }
+      const std::string& receiverName() const override { return receiver_name_; }
+      unsigned int timestamp() const override { return ts_; }
 
       std::string receiver_name_;
       // the new value
